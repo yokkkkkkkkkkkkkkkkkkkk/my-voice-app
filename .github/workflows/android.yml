@@ -1,20 +1,29 @@
-name: Build
+name: Build APK Final
 on: [push]
+
 jobs:
-  android:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install Buildozer
-        run: pip install buildozer cython==0.29.33
-      - name: Build APK
+
+      - name: Install Tools
         run: |
-          sudo apt-get install -y libffi-dev
-          yes | buildozer -v android debug
-      - uses: actions/upload-artifact@v3
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools libltdl-dev
+          pip install buildozer cython==0.29.33
+
+      - name: Build with Buildozer
+        # السطر التالي يوافق على التراخيص أوتوماتيكياً
+        run: yes | buildozer -v android debug
+
+      - name: Upload Finished APK
+        uses: actions/upload-artifact@v3
         with:
-          name: my-apk
+          name: My_Final_App
           path: bin/*.apk
